@@ -1,35 +1,47 @@
 import React, { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import Chat from "./Chat";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Popup = () => {
   const [summary, setSummary] = useState("");
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
   const [expand, setExpand] = useState(false);
 
- const handleSummarize = () => {
-   setExpand(true);
-   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-     chrome.runtime.sendMessage({ type: "summarizePage" }, (response) => {
-       if (chrome.runtime.lastError) {
-         console.error(
-           "Error summarizing page:",
-           chrome.runtime.lastError.message
-         );
-         setSummary("Error summarizing page.");
-       } else if (response) {
-         setSummary(response.summary);
-       } else {
-         console.error("No response received");
-         setSummary("No response received");
-       }
-     });
-   });
- };
+  const handleSummarize = () => {
+    setExpand(true);
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.scripting.executeScript(
+        {
+          target: { tabId: tabs[0].id },
+          function: summarizePage,
+        },
+        (results) => {
+          setSummary(results[0].result);
+        }
+      );
+    });
+  };
 
+  const handleAsk = () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.scripting.executeScript(
+        {
+          target: { tabId: tabs[0].id },
+          function: askQuestion,
+          args: [question],
+        },
+        (results) => {
+          setAnswer(results[0].result);
+        }
+      );
+    });
+  };
 
   const handleClose = () => {
     setExpand(false); // Reset the expand state to false
     setSummary(""); // Clear the summary
+    setQuestion(""); // Clear the question input
+    setAnswer(""); // Clear the answer
   };
 
   return (
@@ -45,9 +57,12 @@ const Popup = () => {
         Quick Read
       </button>
 
-      <AnimatePresence>
+  
         {expand && (
-          <motion.div className="inset-0 z-50 flex items-center justify-center">
+          <motion.div
+            className="inset-0 z-50 flex items-center justify-center"
+           
+          >
             <div className="relative bg-custom-gradient2 text-white w-[800px] rounded-lg p-4 overflow-hidden">
               <div className="flex justify-between items-center mb-4">
                 <h1 className="text-xl font-bold">Quick Read</h1>
@@ -72,13 +87,41 @@ const Popup = () => {
                     {summary}
                   </p>
                 )}
-                <Chat />
+                <input
+                  type="text"
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  placeholder="Ask a question"
+                  className="border px-2 py-1 rounded mb-4 w-full"
+                />
+                <button
+                  className="bg-green-500 text-white px-4 py-2 rounded"
+                  onClick={handleAsk}
+                >
+                  Ask Question
+                </button>
+                {answer && <p className="mt-4">{answer}</p>}
               </div>
             </div>
           </motion.div>
         )}
-      </AnimatePresence>
+  
     </div>
+  );
+};
+
+const summarizePage = () => {
+  const bodyText = document.body.innerText;
+  return bodyText.split(". ").slice(0, 5).join(". ") + ".";
+};
+
+const askQuestion = (question) => {
+  const bodyText = document.body.innerText;
+  const sentences = bodyText.split(". ");
+  return (
+    sentences.find((sentence) =>
+      sentence.toLowerCase().includes(question.toLowerCase())
+    ) || "No answer found."
   );
 };
 

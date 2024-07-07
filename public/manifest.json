@@ -2,13 +2,18 @@
   "manifest_version": 3,
   "name": "Page Summarizer",
   "version": "1.0",
-  "description": "It summarizes the webpage and respond to the queires based on info available on webpage",
-  "permissions": ["activeTab", "scripting", "storage"],
+  "description": "Summarize the content of the current webpage or answer specific questions.",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  },
   "background": {
     "service_worker": "background.js"
-  },
-  "action": {
-    "default_popup": "index.html"
   },
   "content_scripts": [
     {
