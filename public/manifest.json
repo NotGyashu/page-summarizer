@@ -21,12 +21,7 @@
   "background": {
     "service_worker": "background.js"
   },
-   "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["readability.js", "content.js"]
-    }
-  ],
+   
  
   "web_accessible_resources": [
     {
