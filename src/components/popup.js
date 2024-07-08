@@ -63,7 +63,7 @@ const Popup = () => {
             </div>
             <div>
               {summary && (
-                <p className="mb-4 border-2 rounded-md p-3 overflow-y-scroll max-h-[400px] scrollbar-hide">
+                <p className="mb-4 border-2 rounded-md text-sm p-3 overflow-y-scroll max-h-[300px] scrollbar-hide">
                   {summary}
                 </p>
               )}

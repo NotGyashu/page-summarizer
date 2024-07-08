@@ -76,6 +76,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           "Received response to background from content script:",
           response
         );
+        //send this response.summary to for nlp
+        // response from there should br sent to popup
         sendResponse({ summary: response.summary });
       } catch (error) {
         console.error(
@@ -85,6 +87,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ summary: "Error in summarizing" });
       }
     });
+    return true; // Indicates that we will respond asynchronously
+  }
+
+
+// Listener for answering questions
+  if (message.type === "answerQuestion") {
+    console.log("Question received:", message.question);
+    // Placeholder response
+    const answer = "Here is the answer";
+    sendResponse({ answer });
     return true; // Indicates that we will respond asynchronously
   }
 });
