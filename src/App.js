@@ -1,11 +1,13 @@
-import logo from './logo.svg';
-import './App.css';
-import Popup from './components/popup';
+import React from "react";
+
+import "./index.css";
+import Popup from "./components/popup";
 
 function App() {
   return (
-    
-    <Popup/>
+    <div className="">
+      <Popup />
+    </div>
   );
 }
 

@@ -1,21 +1,36 @@
-// content.js
-// Placeholder for any content script functionality needed
+import { Readability } from "@mozilla/readability";
+import { JSDOM } from "jsdom";
 
-// If you need to communicate between your popup and content script, you can set up message listeners.
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "summarize") {
-    const bodyText = document.body.innerText;
-    const summary = bodyText.split(". ").slice(0, 5).join(". ") + ".";
-    sendResponse({ summary });
-  }
+// Content script
+console.log("content script is loaded");
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log("Message received in content script from background", message);
 
-  if (request.action === "askQuestion") {
-    const question = request.question.toLowerCase();
-    const bodyText = document.body.innerText;
-    const sentences = bodyText.split(". ");
-    const answer =
-      sentences.find((sentence) => sentence.toLowerCase().includes(question)) ||
-      "No answer found.";
-    sendResponse({ answer });
+  if (message.type === "summarizePage") {
+    summarizePage()
+      .then((summary) => {
+        console.log("Summary generated:", summary);
+        sendResponse({ summary });
+      })
+      .catch((error) => {
+        console.error("Error summarizing page:", error);
+        sendResponse({ summary: "Error in summarizing" });
+      });
+    return true; // Indicates that we will respond asynchronously
   }
 });
+
+async function summarizePage() {
+  let summary = "";
+  try {
+    const doc = new JSDOM(document.documentElement.outerHTML).window.document;
+    const reader = new Readability(doc);
+    const article = reader.parse();
+    summary = article.textContent;
+  } catch (error) {
+    console.error("Error summarizing page:", error);
+    summary = "Error in summarizing";
+  }
+  console.log("Final summary:", summary);
+  return summary;
+}

@@ -3,7 +3,13 @@
   "name": "Page Summarizer",
   "version": "1.0",
   "description": "Summarize the content of the current webpage or answer specific questions.",
-  "permissions": ["activeTab", "scripting"],
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "declarativeContent",
+    "tabs"
+   
+  ],
   "action": {
     "default_popup": "index.html",
     "default_icon": {
@@ -15,12 +21,13 @@
   "background": {
     "service_worker": "background.js"
   },
-  "content_scripts": [
+   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "js": ["readability.js", "content.js"]
     }
   ],
+ 
   "web_accessible_resources": [
     {
       "resources": ["popup.js"],
