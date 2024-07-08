@@ -1,8 +1,9 @@
+console.log("Content script loaded.");
+
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
 
-// Content script
-console.log("content script is loaded");
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log("Message received in content script from background", message);
 
@@ -22,15 +23,76 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 async function summarizePage() {
   let summary = "";
-  try {
-    const doc = new JSDOM(document.documentElement.outerHTML).window.document;
-    const reader = new Readability(doc);
-    const article = reader.parse();
-    summary = article.textContent;
-  } catch (error) {
-    console.error("Error summarizing page:", error);
-    summary = "Error in summarizing";
-  }
+  const textArray = await Promise.all(extractLimitedText());
+  summary = textArray.join(" ");
+  console.log("Text array:", textArray);
   console.log("Final summary:", summary);
   return summary;
+}
+
+function extractLimitedText() {
+  return [
+    extractHeadings(),
+    extractSectionText(),
+    extractDynamicContent(),
+    extractParas(),
+  ];
+}
+
+async function extractDynamicContent() {
+  try {
+    const element = await waitForElement(".dynamic-content");
+    if (element) {
+      return element.innerText.trim();
+    } else {
+      return "";
+    }
+  } catch (error) {
+    console.error("Error extracting dynamic content:", error);
+    return "";
+  }
+}
+
+function waitForElement(selector) {
+  return new Promise((resolve) => {
+    const interval = setInterval(() => {
+      const element = document.querySelector(selector);
+      if (element) {
+        clearInterval(interval);
+        resolve(element);
+      }
+    }, 100);
+  });
+}
+
+function extractParas() {
+  let text = "";
+  const paragraphs = document.querySelectorAll("p");
+  paragraphs.forEach((p, index) => {
+    if (index < 5) {
+      text += p.innerText + " ";
+    }
+  });
+ // console.log("Paragraph text:", text);
+  return text.trim();
+}
+
+function extractHeadings() {
+  let text = "";
+  const headings = document.querySelectorAll("h1, h2, h3");
+  headings.forEach((heading) => {
+    text += heading.innerText + " ";
+  });
+ // console.log("Headings text:", text);
+  return text.trim();
+}
+
+function extractSectionText() {
+  let text = "";
+  const section = document.querySelector(".main-content");
+  if (section) {
+    text = section.innerText.trim();
+  }
+  //console.log("Section text:", text);
+  return text;
 }
