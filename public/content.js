@@ -41,6 +41,6 @@ async function summarizePage() {
     summary = "Error in summarizing";
   }
 
-  console.log("Final summary:", summary);
+  //console.log("Final summary:", summary);
   return summary;
 }

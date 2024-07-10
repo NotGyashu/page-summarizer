@@ -1,13 +1,16 @@
 chrome.runtime.onInstalled.addListener(() => {
   console.log("Background script loaded.");
 });
+// background.js
+
+//const { summarizeText, answerQuestion } = require('./nlp.js');
 
 function injectScripts(tabId) {
   return new Promise((resolve, reject) => {
     chrome.scripting.executeScript(
       {
         target: { tabId: tabId },
-        files: ["purify.min.js", "readability.js", "content.js"],
+        files: ["libs/purify.min.js", "libs/readability.js", "content.js"], 
       },
       () => {
         if (chrome.runtime.lastError) {
@@ -66,37 +69,37 @@ chrome.action.onClicked.addListener(async (tab) => {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "summarizePage") {
-    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-      try {
-        await injectScripts(tabs[0].id);
-        const response = await sendMessageToContentScript(tabs[0].id, {
+    try {
+      chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+        const tabId = tabs[0].id;
+        await injectScripts(tabId);
+        const response = await sendMessageToContentScript(tabId, {
           type: "summarizePage",
         });
         console.log(
           "Received response to background from content script:",
           response
         );
-        //send this response.summary to for nlp
-        // response from there should br sent to popup
-        sendResponse({ summary: response.summary });
-      } catch (error) {
-        console.error(
-          "Error sending message from background to content script:",
-          error
-        );
-        sendResponse({ summary: "Error in summarizing" });
-      }
-    });
+
+        //const summary = await summarizeText(response.text);
+        sendResponse({ summary:response.summary });
+      });
+    } catch (error) {
+      console.error("Error during summarization:", error);
+      sendResponse({ summary: "Error in summarizing" });
+    }
     return true; // Indicates that we will respond asynchronously
   }
 
-
-// Listener for answering questions
   if (message.type === "answerQuestion") {
-    console.log("Question received:", message.question);
-    // Placeholder response
-    const answer = "Here is the answer";
-    sendResponse({ answer });
+    try {
+      const answer = "here is the ans"
+      //await answerQuestion(message.question, message.context);
+      sendResponse({ answer });
+    } catch (error) {
+      console.error("Error during question answering:", error);
+      sendResponse({ answer: "Error in answering question" });
+    }
     return true; // Indicates that we will respond asynchronously
   }
 });
