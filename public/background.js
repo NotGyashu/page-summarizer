@@ -81,7 +81,7 @@ function fetchApiKey() {
     fetch(chrome.runtime.getURL("utility/setapi.js"))
       .then((response) => response.text())
       .then((text) => {
-        console.log("Content of setapi.js:", text); // Log the content of the file
+      
         // Extract API key from the script content
          const match = text.match(/const\s+Key\s*=\s*['"]([^'"]+)['"]/i);
         console.log("Match result:", match); // Log the match result

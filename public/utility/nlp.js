@@ -39,8 +39,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 // Function to fetch the summary of the text using Cohere AI
 async function summarizeText(text, apiKey) {
   try {
-    console.log(apiKey);
-    console.log(text);
+  
     const response = await fetch("https://api.cohere.ai/v1/summarize", {
       method: "POST",
       headers: {
