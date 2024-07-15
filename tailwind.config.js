@@ -1,8 +1,9 @@
 // tailwind.config.js
+
 module.exports = {
-  content: [
-    "./src/**/*.{js,jsx,ts,tsx}", // Adjust the path according to your project structure
-  ],
+  mode: "jit", // Just-in-Time mode for Tailwind CSS
+  purge: ["./src/**/*.html", "./src/**/*.js"], // Purge unused styles in production
+  darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
       backgroundImage: {
@@ -13,5 +14,11 @@ module.exports = {
       },
     },
   },
+  variants: {
+    extend: {},
+  },
   plugins: [],
 };
+
+
+ 

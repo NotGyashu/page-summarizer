@@ -3,23 +3,22 @@ console.log("Content script loaded");
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log("Message received in content script from background", message);
-
-  if (message.type === "summarizePage") {
-    summarizePage()
-      .then((summary) => {
-        console.log("Summary generated:", summary);
-        sendResponse({ summary });
+  if (message.type === "extractPage") {
+    extractPage()
+      .then((text) => {
+        console.log("extraction Done:", text.trim());
+        sendResponse({ text });
       })
       .catch((error) => {
-        console.error("Error summarizing page:", error);
-        sendResponse({ summary: "Error in summarizing" });
+        console.error("Error extracting page: in content", error);
+        sendResponse({ text: "Error in extracting in content" });
       });
     return true; // Indicates that we will respond asynchronously
   }
 });
 
-async function summarizePage() {
-  let summary = "";
+async function extractPage() {
+  let text = "";
   try {
     // Clone the document to avoid modifying the original DOM
     const documentClone = document.cloneNode(true);
@@ -32,15 +31,15 @@ async function summarizePage() {
 
     if (article) {
       // Sanitize the extracted content
-      summary = DOMPurify.sanitize(article.textContent);
+      text = DOMPurify.sanitize(article.textContent);
     } else {
-      summary = "Could not extract readable content.";
+      text = "Could not extract readable content. is the page too short? ";
     }
   } catch (error) {
-    console.error("Error summarizing page:", error);
-    summary = "Error in summarizing";
+    console.error("Error in extracting page using readibility ", error);
+    text = "Error in extracting using readibility";
   }
 
-  //console.log("Final summary:", summary);
-  return summary;
+  //console.log("Final text:", text);
+  return text.trim();
 }

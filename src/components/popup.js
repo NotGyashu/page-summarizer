@@ -1,25 +1,32 @@
 import React, { useState } from "react";
-import Chat from "./Chat";
+import Chat from "./Chat.js";
+import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
+
 
 const Popup = () => {
-  
   const [summary, setSummary] = useState("");
   const [expand, setExpand] = useState(false);
-       console.log("hello from popup");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSummarize = () => {
     setExpand(true);
-    chrome.runtime.sendMessage({ type: "summarizePage" }, (response) => {
+    setIsLoading(true);
+    chrome.runtime.sendMessage({ type: "extractPage" }, (response) => {
       if (chrome.runtime.lastError) {
-        console.error(
+        console.error( 
           "Error sending message from popup to background script:",
           chrome.runtime.lastError.message
         );
-        setSummary("err in summarizing")
+        setSummary("Error in extracting the page in popup");
       } else {
-        console.log("Received response to popup from background script:", response);
+        console.log(
+          "Received response to popup from background script:",
+          response
+        );
         setSummary(response.summary);
       }
+      setIsLoading(false); // Stop loading
     });
   };
 
@@ -62,10 +69,16 @@ const Popup = () => {
               </div>
             </div>
             <div>
-              {summary && (
-                <p className="mb-4 border-2 rounded-md text-sm p-3 overflow-y-scroll max-h-[300px] scrollbar-hide">
-                  {summary}
-                </p>
+              {isLoading ? (
+                <Box sx={{ width: "100%" }}>
+                  <LinearProgress />
+                </Box>
+              ) : (
+                summary && (
+                  <p className="mb-4 border-2 rounded-md text-sm p-3 overflow-y-scroll max-h-[300px] scrollbar-hide">
+                    {summary}
+                  </p>
+                )
               )}
             </div>
             <Chat />

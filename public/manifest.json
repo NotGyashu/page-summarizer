@@ -9,7 +9,7 @@
     "declarativeContent",
     "tabs",
     "storage"
-   
+  
   ],
   "action": {
     "default_popup": "index.html",
@@ -20,7 +20,8 @@
     }
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module" 
   },
    
  

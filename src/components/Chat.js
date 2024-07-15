@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import SendIcon from "@mui/icons-material/Send";
 
 const Chat = () => {
   const [question, setQuestion] = useState("");
@@ -38,9 +37,7 @@ const Chat = () => {
         {chatLog.map((entry, index) => (
           <div key={index}>
             <p className="">You: {entry.question}</p>
-            {entry.answer && (
-              <p className="">Bot: {entry.answer}</p>
-            )}
+            {entry.answer && <p className="">Bot: {entry.answer}</p>}
           </div>
         ))}
       </div>
@@ -52,10 +49,12 @@ const Chat = () => {
           placeholder="Ask a question"
           className="border px-2 py-1 focus:outline-none rounded-full text-sm w-full text-black flex-grow"
         />
-        <SendIcon
+        <div
           onClick={handleSend}
           className="mx-2 text-green-400 cursor-pointer"
-        />
+        >
+          Enter
+        </div>
       </div>
     </div>
   );
