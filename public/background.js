@@ -127,7 +127,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           response
         );
         const apiKey = await fetchApiKey();
-        console.log(apiKey);
+     
         const summary = await sendMessageToNLP(tabId, {
           text: response.text.slice(0, 100000),
           apiKey: apiKey,
