@@ -84,7 +84,7 @@ function fetchApiKey() {
       
         // Extract API key from the script content
          const match = text.match(/const\s+Key\s*=\s*['"]([^'"]+)['"]/i);
-        console.log("Match result:", match); // Log the match result
+       
         resolve(match ? match[1] : null);
       })
       .catch((error) => {
