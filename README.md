@@ -1,60 +1,70 @@
-# Getting Started with Create React App
 
-This project was created using [Create React App](https://github.com/facebook/create-react-app), a tool maintained by Facebook. It provides a pre-configured setup for developing modern React applications.
+# Chrome Extension for Text Summarization
 
-## Available Scripts
+This Chrome extension uses Cohere AI to summarize text from web pages. It divides the text into manageable chunks, sends them for summarization, and displays the summarized text in the UI.
 
-In the project directory, you can run the following scripts:
+## Features
 
-### `npm start`
+- Extracts text from the current webpage.
+- Summarizes the text using Cohere AI.
+- Handles large texts by dividing them into chunks.
+- Displays the summarized text in real-time.
 
-Runs the app in development mode.
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-The page will reload when you make changes.
+## Installation
 
-### `npm test`
+1. **Clone the repository:**
 
-Launches the test runner in interactive watch mode.
-See the [running tests](https://facebook.github.io/create-react-app/docs/running-tests) section for more details.
+   ```bash
+   git clone https://github.com/yourusername/chrome-text-summarizer.git
+   cd chrome-text-summarizer
+   ```
 
-### `npm run build`
+2. **Install dependencies:**
 
-Builds the app for production to the `build` folder.
-It optimizes React for best performance and includes minification.
-The app is ready to be deployed.
+   ```bash
+   npm install
+   ```
 
-### `npm run eject`
+3. **Build the project:**
 
-**Note: this is a one-way operation.**
+   ```bash
+   npm run build
+   ```
 
-Ejects the app from Create React App's build dependency.
-Copies configuration files and transitive dependencies (Webpack, Babel, ESLint, etc.) into your project.
-This command allows full customization of build tools though it's irreversible.
+4. **Load the extension in Chrome:**
 
-## Learn More
+   - Open Chrome and go to `chrome://extensions/`.
+   - Enable "Developer mode" by clicking the toggle switch in the top right corner.
+   - Click the "Load unpacked" button and select the `build` directory.
 
-Explore further with the following resources:
+## Usage
 
-- [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started)
-- [React documentation](https://reactjs.org/docs/getting-started.html)
+1. **Activate the extension:**
 
-## Advanced Features
+   - Click on the extension icon in the Chrome toolbar.
+   - Click on the "Summarize" button to start the summarization process.
+   - The summarized text will be displayed in the extension popup.
 
-Learn about advanced configurations and optimizations:
+## Configuration
 
-- [Code Splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-- [Analyzing Bundle Size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-- [Progressive Web App Development](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-- [Advanced Configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-- [Deployment Strategies](https://facebook.github.io/create-react-app/docs/deployment)
+- Ensure you have a valid Cohere AI API key.
+- The API key should be added to the `utility/setapi.js` file.
 
-## Troubleshooting
+## Contributing
 
-Find solutions for common issues:
-
-- [Troubleshooting Build Failures](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
-
-
+1. **Fork the repository.**
+2. **Create a new branch:**
+   ```bash
+   git checkout -b feature-branch
+   ```
+3. **Make your changes and commit them:**
+   ```bash
+   git commit -m 'Add some feature'
+   ```
+4. **Push to the branch:**
+   ```bash
+   git push origin feature-branch
+   ```
+5. **Submit a pull request.**
 
 

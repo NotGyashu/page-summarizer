@@ -2,7 +2,7 @@
 console.log("Content script loaded");
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log("Message received in content script from background", message);
+
   if (message.type === "extractPage") {
     extractPage()
       .then((text) => {

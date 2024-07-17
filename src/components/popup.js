@@ -1,38 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Chat from "./Chat.js";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 
-
 const Popup = () => {
-  const [summary, setSummary] = useState("");
+  const [summaries, setSummaries] = useState([]);
   const [expand, setExpand] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSummarize = () => {
-    setExpand(true);
-    setIsLoading(true);
-    chrome.runtime.sendMessage({ type: "extractPage" }, (response) => {
+  useEffect(() => {
+    const handleResponse = (response) => {
       if (chrome.runtime.lastError) {
-        console.error( 
+        console.error(
           "Error sending message from popup to background script:",
           chrome.runtime.lastError.message
         );
-        setSummary("Error in extracting the page in popup");
+        setSummaries((prevSummaries) => [
+          ...prevSummaries,
+          "Error in extracting the page in popup",
+        ]);
+        setIsLoading(false);
       } else {
         console.log(
           "Received response to popup from background script:",
           response
         );
-        setSummary(response.summary);
+        if(response.summary && response.summary != "" )
+        setSummaries((prevSummaries) => [...prevSummaries, response.summary]);
+        if (response.isFinal) {
+          setIsLoading(false); // Stop loading when all summaries are received
+        }
       }
-      setIsLoading(false); // Stop loading
-    });
+    };
+
+    if (expand) {
+      chrome.runtime.onMessage.addListener(handleResponse);
+    }
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(handleResponse);
+    };
+  }, [expand]);
+
+  const handleSummarize = () => {
+    setExpand(true);
+    setIsLoading(true);
+    chrome.runtime.sendMessage({ type: "extractPage" });
   };
 
   const handleClose = () => {
     setExpand(false); // Reset the expand state to false
-    setSummary(""); // Clear the summary
+    setSummaries([]); // Clear the summaries
   };
 
   return (
@@ -69,16 +87,17 @@ const Popup = () => {
               </div>
             </div>
             <div>
-              {isLoading ? (
+              {isLoading && (
                 <Box sx={{ width: "100%" }}>
                   <LinearProgress />
                 </Box>
-              ) : (
-                summary && (
-                  <p className="mb-4 border-2 rounded-md text-sm p-3 overflow-y-scroll max-h-[300px] scrollbar-hide">
-                    {summary}
-                  </p>
-                )
+              )}
+              {summaries.length > 0 && (
+                <ul className="mb-4 border-2 flex flex-col gap-2 p-2 rounded-md text-sm overflow-y-scroll max-h-[300px] list-inside list-disc scrollbar-hide">
+                  {summaries.map((summary, index) => (
+                    <li key={index}>{summary}</li>
+                  ))}
+                </ul>
               )}
             </div>
             <Chat />
