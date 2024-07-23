@@ -49,6 +49,9 @@ This Chrome extension uses Cohere AI to summarize text from web pages. It divide
 
 - Ensure you have a valid Cohere AI API key.
 - The API key should be added to the `utility/setapi.js` file.
+    ```js
+     const codeKey = "YOUR_COHERE_AI_KEY"
+    ```
 
 ## Contributing
 
